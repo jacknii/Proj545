@@ -22,19 +22,17 @@ To narrow down some factors, I make some regression plots between wage and tenur
 
 So the most obvious point to notice is the increase in wage over time. 2013 has the highest wages compared to 1997. Also, Alberta appears to have the highest wage compared to the other provinces even without factoring in tenure. 
 
-With that, I can narrow my focus onto the data from Alberta in recent years. Looking at education next, I notice a curious finding.
+With that, I can narrow my focus onto the data from Alberta in recent years. Looking at education next:
 
 ![boxplot of wage and education](wage_educ.png)
 
-The mean of people with some post secondary education is higher than those with a Bacherlors or higher. Those with a Bacherlors has a higher wage ceiling but the finding is still surprising.
+The mean wage of people with Bachelors or higher is unsurprisingly higher than the other education levels. Those with some post-secondary education such as college only makes marginally more than highschool grads which is slightly surprising.
 
 I take a look at the other provinces to see if this is also the case.
 
 ![boxplot of wage and education for all](boxplot_wage_educ.png)
 
-The other 3 provinces do not have this anomaly. Their mean for those with a Bachelors is quite a bit higher than those with some post-secondary education.
-
-I fit a linear regression line to see the effect of these two education levels on wage over the course of the 17 years.
+The other 3 provinces also have this case. I fit a linear regression line to see the effect of these two education levels on wage over the course of the 17 years.
 
 ```{r echo = FALSE}
 library(plyr)
@@ -52,12 +50,12 @@ regfun <- function(x) {
   return(estCoefs)
 }
 
-wage_reg <- ddply(subset(lfs, PROV == "AB" & EDUC %in% c("Ba or More", "Some PS")), ~ SURVYEAR, regfun)
+wage_reg <- ddply(subset(lfs, PROV == "AB" & EDUC %in% c("Some PS", "HS Grad")), ~ SURVYEAR, regfun)
 x <- xtable(wage_reg)
 print(x, type="html", include.rownames = FALSE)
 ```
 
-There does not seem to be a significant difference on the effect on wage between the two education levels throughout the years. This leads me to include both of these education levels on my analysis below.
+There does not seem to be a significant difference on the effect on wage between the two education levels throughout the years.
 
 Looking at unions:
 
@@ -69,14 +67,14 @@ Looking at sex:
 
 ![boxplot of wage and sex](wage_sex.png)
 
-Women have a smaller variance than men, but we can see men on average have a higher wage.
+Women have a smaller variance than men, but we can see men have a much higher wage.
 
 Looking at age:
 
 ![boxplot of wage and age](wage_age.png)
 
-The first two age groups 15-29 and 30-44 make more on average than the other two groups. It is a bit interesting to see that those in the 15-29 group can make as much if not more than those 30-44.
+The third age group 45-59 make more on than the other groups. It is quite interesting to see the jumps in wage level from one group to the next.
 
-So overall, it seems men working in Alberta of the age 15-44 with some post secondary education or more and not in a union make the highest wage. Thinking about this intuitively, the results aren't too surprising if we think about the oil industry in Alberta. The industry is more likely to attract younger males who haven't settled down yet to work at more isolated environments with a reward of high pay.
+So overall, it seems men working in Alberta of the age 45-59 with some post secondary education or more and not in a union make the highest wage. Thinking about this intuitively, the results aren't too surprising if we think about the oil industry in Alberta. The industry is more likely to attract younger males who haven't settled down yet to work at more isolated environments with a reward of high pay.
 
 _Worked in collaboration with Jonathan Zhang_

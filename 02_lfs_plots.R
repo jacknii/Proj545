@@ -46,12 +46,12 @@ regfun <- function(x) {
 }
 
 ## Applying regfun to data from Alberta with the two education levels "Some PS" and "Ba and more" by year
-wage_reg <- ddply(subset(lfs, PROV == "AB" & EDUC %in% c("Ba or More", "Some PS")), ~ SURVYEAR, regfun)
+wage_reg <- ddply(subset(lfs, PROV == "AB" & EDUC %in% c("Some PS", "HS Grad")), ~ SURVYEAR, regfun)
 x <- xtable(wage_reg)
 print(x, type="html", file="wage_reg.html")
 
 ## Storing a subset for easier access
-lfsAb <- subset(lfs, SURVYEAR %in% c("2012", "2013") & PROV == "AB" & EDUC %in% c("Some PS", "Ba or MOre"))
+lfsAb <- subset(lfs, SURVYEAR %in% c("2012", "2013") & PROV == "AB" & EDUC == "Ba or More")
 
 ## Effect of union on subset
 wage_union <- ggplot(lfsAb, aes(x = ANNUAL_WAGE, fill = UNION, color = UNION)) + geom_bar() + scale_x_continuous(labels = comma) + theme_wsj() + theme(axis.title=element_text(size = 12)) + scale_fill_brewer(palette = "Set1") + scale_color_brewer(palette = "Set1")

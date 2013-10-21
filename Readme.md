@@ -1,5 +1,7 @@
 Readme for STAT545A Homework 6 - Jack Ni
 
+Important note: The first script will take a bit of time to run due to the size of the input files and will require a decent amount of memory to run.
+
 * Download into an empty directory:
     - Input data: [`lfs.zip`](https://www.dropbox.com/s/y02gt99rmwomy4m/lfS.zip) *Note: Must download and unzip all 17 files to the empty directory.
     - Scripts: [`01_aggregate_data.R`](https://github.com/jacknii/Proj545/blob/master/01_aggregate_data.R) and [`02_lfs_plots.R`](https://github.com/jacknii/Proj545/blob/master/02_lfs_plots.R)

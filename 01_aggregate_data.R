@@ -18,6 +18,7 @@ LFS11 <- read.csv(file="11.csv")
 LFS12 <- read.csv(file="12.csv")
 LFS13 <- read.csv(file="13.csv")
 
+## Making a list and tracking which columns to keep
 data <- list(LFS97, LFS98, LFS99, LFS00, LFS01, LFS02, LFS03, LFS04, LFS05, LFS06, LFS07, LFS08, LFS09, LFS10, LFS11, LFS12, LFS13)
 columnKeep <- c("SURVYEAR", "LFSSTAT", "PROV", "AGE_12", "SEX", "EDUC90", "TENURE", "UNION", "HRLYEARN", "UHRSMAIN")
 keep <- function(x) {
@@ -26,21 +27,22 @@ keep <- function(x) {
 }
 LFSraw <- ldply(data, keep)
 
-# Let's only keep BC, Alberta, Ontario and Québec, and drop anyone not in labour force.
-provinces <- c("Alberta", "British Co", "Ontario", "Québec")
-LFS <- droplevels(subset(LFS, PROV %in% provinces & LFSSTAT != "Not in lab"))
+## Dropping every province except BC, AB, ON, and QC and people not in the labour force
+provinces <- c("Manitoba", "New Brunsw", "Newfoundla", "Nova Scoti", "Prince Edw", "Saskatchew")
+LFS <- droplevels(subset(LFSraw, !(PROV %in% provinces) & LFSSTAT != "Not in lab"))
 
-# I want to create a random sample of 1000 observations for each year.
+## Creating a random sample of 1000 observations for each year.
 set.seed(123)
 random <- function(x){
   samples<-sample(1:nrow(x), 1000)
   set <- x[samples,]
 }
 
-LFS<-ddply(LFSraw, ~SURVYEAR, random)
+LFS<-ddply(LFS, ~SURVYEAR, random)
 
-# Look how difficult it is to read `EDUC90', let's change that. Also `British Co' is not desired, nor do we want to be dealing with the accent on Quebec, let's replace them with abbreviations. Similarily let's change `Union`
 head(LFS)
+
+## Making three functions to change some of the values for education, union, province, and age. Allowing them to be more easily read.
 
 newEducation <- function(x){
   if(x=="0 to 8 yea" | x=="Some secon")
@@ -70,7 +72,7 @@ newProv <- function(x){
   if(x=="Ontario")
     return("ON")
   else
-    return("QU")
+    return("QC")
 }
 
 newAge <- function(x){
@@ -84,7 +86,7 @@ newAge <- function(x){
     return("60+")
 }
 
-# Create the new variables. Some reason I could not use `ddply` and create them, I will resort to `sapply`
+## Create the new variables
 LFS$EDUC <- as.factor(sapply(LFS$EDUC90, newEducation))
 LFS$PROV <- as.factor(sapply(LFS$PROV, newProv))
 LFS$UNION<- as.factor(sapply(LFS$UNION, newUnion))
@@ -96,7 +98,7 @@ colnames(LFS)[colnames(LFS) == "UHRSMAIN"] <- "HOURS"
 #Adding an annual wage column
 LFS$ANNUAL_WAGE <- LFS$HRLYEARN * LFS$HOURS * 52
 
-# Let's drop EDUC90 variable
+# Dropping 'EDUC90' and 'AGE_12' columns
 LFS<-LFS[,!names(LFS) %in% c("EDUC90", "AGE_12")]
 
 str(LFS)
